@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-
+import type * as THREE from 'three';
 interface Brain3DProps {
   width?: number;
   height?: number;
