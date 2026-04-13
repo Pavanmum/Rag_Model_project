@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRI RAG System - 3D Brain Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <div class="logo-icon">🧠</div>
+                <span class="logo-text">MRI<strong>RAG</strong>.ai</span>
+            </div>
+            <nav class="nav">
+                <a href="#analysis">Analysis</a>
+                <a href="#upload">Upload</a>
+                <a href="#search">Search</a>
+                <a href="#docs">Documentation</a>
+            </nav>
+            <div class="header-actions">
+                <button class="btn-secondary">
+                    <i class="fas fa-user-graduate"></i>
+                    For Researchers
+                </button>
+                <button class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Left Panel -->
+        <div class="left-panel">
+            <div class="panel-section">
+                <h3>Brain Regions</h3>
+                <select id="brain-region" class="region-selector">
+                    <option value="whole">Whole Brain</option>
+                    <option value="left-hemisphere">Left Cerebral Hemisphere</option>
+                    <option value="right-hemisphere">Right Cerebral Hemisphere</option>
+                    <option value="frontal">Frontal Lobe</option>
+                    <option value="parietal">Parietal Lobe</option>
+                    <option value="temporal">Temporal Lobe</option>
+                    <option value="occipital">Occipital Lobe</option>
+                    <option value="cerebellum">Cerebellum</option>
+                    <option value="brainstem">Brainstem</option>
+                </select>
+            </div>
+
+            <div class="panel-section">
+                <h3>Scan Information</h3>
+                <div id="scan-info" class="scan-info">
+                    <div class="info-item">
+                        <span class="label">Patient ID:</span>
+                        <span class="value">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Modality:</span>
+                        <span class="value">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Quality:</span>
+                        <span class="value">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Features:</span>
+                        <span class="value">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Analysis Tools</h3>
+                <div class="tool-grid">
+                    <button id="upload-btn" class="tool-btn">
+                        <i class="fas fa-upload"></i>
+                        Upload Scan
+                    </button>
+                    <button id="analyze-btn" class="tool-btn">
+                        <i class="fas fa-search"></i>
+                        Analyze
+                    </button>
+                    <button id="compare-btn" class="tool-btn">
+                        <i class="fas fa-balance-scale"></i>
+                        Compare
+                    </button>
+                    <button id="report-btn" class="tool-btn">
+                        <i class="fas fa-file-alt"></i>
+                        Report
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>Visualization Controls</h3>
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="opacity-slider">Opacity</label>
+                        <input type="range" id="opacity-slider" min="0" max="100" value="100">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel - Brain Viewer -->
+        <div class="center-panel">
+            <div class="viewer-header">
+                <h2 id="region-title">Whole Brain</h2>
+                <div class="viewer-controls">
+                    <button id="home-btn" class="control-btn" title="Home">
+                        <i class="fas fa-home"></i>
+                    </button>
+                    <button id="info-btn" class="control-btn" title="Info">
+                        <i class="fas fa-info"></i>
+                    </button>
+                    <button id="settings-btn" class="control-btn" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button id="fullscreen-btn" class="control-btn" title="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="brain-viewer-container">
+                <div id="brain-viewer" class="brain-viewer">
+                    <div id="loading" class="loading-overlay">
+                        <div class="spinner"></div>
+                        <p>Loading 3D Brain Model...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-tabs">
+                <button class="tab-btn active" data-tab="description">Description</button>
+                <button class="tab-btn" data-tab="analysis">Analysis</button>
+                <button class="tab-btn" data-tab="questions">Questions</button>
+            </div>
+            
+            <div class="tab-content">
+                <!-- Description Tab -->
+                <div id="description-tab" class="tab-pane active">
+                    <h3>Brain Region Information</h3>
+                    <div id="region-description" class="region-description">
+                        <p>The human brain is divided into two nearly symmetric hemispheres, which are joined by a thick bridge of white tissue called the corpus callosum. Each hemisphere is comprised of four lobes containing discrete regions that carry out specific functions.</p>
+                        
+                        <h4>Key Features:</h4>
+                        <ul>
+                            <li>Cerebral cortex with distinct functional areas</li>
+                            <li>White matter connecting different regions</li>
+                            <li>Subcortical structures for motor and cognitive control</li>
+                            <li>Specialized areas for language, memory, and sensory processing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Analysis Tab -->
+                <div id="analysis-tab" class="tab-pane">
+                    <h3>Scan Analysis</h3>
+                    <div class="analysis-content">
+                        <div class="result-card">
+                            <h4>Quality Assessment</h4>
+                            <div class="quality-score">
+                                <div class="score-circle">
+                                    <span class="score">85</span>
+                                    <span class="max">/100</span>
+                                </div>
+                                <div class="quality-details">
+                                    <div class="detail-item">
+                                        <span>SNR:</span>
+                                        <span id="snr-value">12.5</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>Contrast:</span>
+                                        <span id="contrast-value">0.85</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <span>Resolution:</span>
+                                        <span id="resolution-value">256x256x180</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h4>Feature Analysis</h4>
+                            <div class="feature-summary">
+                                <div class="feature-stat">
+                                    <span class="stat-number" id="total-features">40</span>
+                                    <span class="stat-label">Total Features</span>
+                                </div>
+                                <div class="feature-breakdown">
+                                    <div class="breakdown-item">
+                                        <span class="category">Statistical</span>
+                                        <span class="count" id="stat-features">21</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="category">Shape</span>
+                                        <span class="count" id="shape-features">9</span>
+                                    </div>
+                                    <div class="breakdown-item">
+                                        <span class="category">Texture</span>
+                                        <span class="count" id="texture-features">10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h4>Detected Issues</h4>
+                            <div id="issues-list" class="issues-list">
+                                <p class="no-issues">✅ No issues detected</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions Tab -->
+                <div id="questions-tab" class="tab-pane">
+                    <h3>Suggested Questions</h3>
+                    <div class="questions-content">
+                        <div class="question-category">
+                            <h4>Basic Questions</h4>
+                            <div id="basic-questions" class="questions-list">
+                                <div class="question-item">What is the overall quality of this scan?</div>
+                                <div class="question-item">What brain regions are visible?</div>
+                                <div class="question-item">Are there any artifacts present?</div>
+                            </div>
+                        </div>
+
+                        <div class="question-category">
+                            <h4>Clinical Questions</h4>
+                            <div id="clinical-questions" class="questions-list">
+                                <div class="question-item">Are there signs of pathology?</div>
+                                <div class="question-item">How does this compare to normal anatomy?</div>
+                                <div class="question-item">What are the key diagnostic features?</div>
+                            </div>
+                        </div>
+
+                        <div class="question-category">
+                            <h4>Technical Questions</h4>
+                            <div id="technical-questions" class="questions-list">
+                                <div class="question-item">What are the acquisition parameters?</div>
+                                <div class="question-item">Is the image quality sufficient for analysis?</div>
+                                <div class="question-item">What preprocessing was applied?</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload Medical Scan</h3>
+                <button id="close-upload" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="upload-area" class="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag & drop your DICOM or NIfTI files here</p>
+                    <p class="upload-hint">or click to browse</p>
+                    <input type="file" id="file-input" accept=".dcm,.nii,.nii.gz" multiple>
+                </div>
+                <div id="upload-progress" class="upload-progress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <p class="progress-text" id="progress-text">Uploading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="brain-viewer.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
