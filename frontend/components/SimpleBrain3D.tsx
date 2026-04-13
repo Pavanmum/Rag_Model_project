@@ -115,39 +115,11 @@ const SimpleBrain3D: React.FC<SimpleBrain3DProps> = ({
         pointLight2.position.set(3, -2, 3);
         scene.add(pointLight2);
 
-        // Create DNA helix model
-        const dnaGroup = new THREE.Group();
-        console.log('Creating DNA helix model...');
+        // Create Brain model group
+        const brainGroup = new THREE.Group();
+        console.log('Creating brain model...');
 
-        // DNA helix parameters
-        const helixHeight = 3;
-        const helixRadius = 0.5;
-        const turns = 3;
-        const segments = 100;
-
-        // Create two strands of DNA
-        const strand1Points = [];
-        const strand2Points = [];
-
-        for (let i = 0; i <= segments; i++) {
-          const t = (i / segments) * turns * Math.PI * 2;
-          const y = (i / segments) * helixHeight - helixHeight / 2;
-
-          // First strand
-          strand1Points.push(new THREE.Vector3(
-            Math.cos(t) * helixRadius,
-            y,
-            Math.sin(t) * helixRadius
-          ));
-
-          // Second strand (180 degrees offset)
-          strand2Points.push(new THREE.Vector3(
-            Math.cos(t + Math.PI) * helixRadius,
-            y,
-            Math.sin(t + Math.PI) * helixRadius
-          ));
-        }
-
+        const cerebrumGeometry = new THREE.SphereGeometry(1.2, 32, 32);
         const cerebrumMaterial = new THREE.MeshStandardMaterial({
           color: 0xd4a5a5, // Pink/rose color
           roughness: 0.7,
